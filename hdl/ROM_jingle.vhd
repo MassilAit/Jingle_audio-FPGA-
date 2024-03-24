@@ -21,8 +21,8 @@ architecture Behavioral of ROM_jingle is
     -- bits 35-20 : durée de note en ms
     -- bits 19-8  : adresse de départ de la note
     -- bits 7-0   : nombre d'echantillons pour la note
-    X"0000"&X"000"&X"00",
-    X"0000"&X"000"&X"00"
+    X"0001"&X"001"&X"00",
+    X"0001"&X"002"&X"00"
     );
   signal data : std_logic_vector(35 downto 0);
 

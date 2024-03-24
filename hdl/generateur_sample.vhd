@@ -147,7 +147,9 @@ begin
   
   ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
   
-  sample_out<=std_logic_vector(not(unsigned((15 downto 0=>'0') & ROM_qsin_sample_i))+1) when invert_output else (15 downto 0=>'0') & ROM_qsin_sample_i ;
+  sample_out<=(23 downto 0=>'0') when enable_i='0' else
+               std_logic_vector(not(unsigned((15 downto 0=>'0') & ROM_qsin_sample_i))+1) when invert_output else 
+              (15 downto 0=>'0') & ROM_qsin_sample_i ;
   
  
   
