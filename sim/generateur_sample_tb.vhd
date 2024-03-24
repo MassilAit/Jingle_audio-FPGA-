@@ -223,6 +223,163 @@ begin
         sample_ready_i_tb<='1';
         wait for 2*clk_period;
         sample_ready_i_tb<='0';
+        wait for 30*clk_period;
+        
+        
+        
+        enable_i_tb<='0';
+        note_start_addr_i_tb <= (8 downto 0=>'0')&"111";
+        note_sample_count_i_tb <=std_logic_vector(to_unsigned(4,8));
+        
+        wait for 2*clk_period;
+        enable_i_tb<='1';
+        wait for 5*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
+        wait for 10*clk_period;
+        
+        
+        sample_ready_i_tb<='1';
+        wait for 2*clk_period;
+        sample_ready_i_tb<='0';
         wait for 10*clk_period;
         wait;
     end process;

@@ -15,7 +15,7 @@ entity generateur_sample is
 end generateur_sample;
 
 architecture Behavioral of generateur_sample is
-    type state is(enable_wait,rom_up, ready_wait,p1,p2,p3,p4);
+    type state is(enable_wait,ready_wait,p1,p2,p3,p4);
     signal current_state, next_state:state;
     signal p_cnt:integer range 0 to 3:=0;
     signal addr_cnt : integer range 0 to 4095;
@@ -41,13 +41,14 @@ begin
         when enable_wait =>
         
             if enable_i='1' then
-                next_state<=rom_up;
+                p_cnt<=0;
+                invert_output<=false;
+                addr_cnt<=to_integer(unsigned(note_start_addr_i));
+                next_state<=ready_wait;
             else
                 next_state<=enable_wait;
             end if;
             
-         when rom_up =>
-            next_state<=ready_wait;
             
         when ready_wait =>
             if enable_i='0' then
@@ -73,6 +74,16 @@ begin
             
         
         when p1 =>
+        
+            invert_output<=false;
+            
+            if addr_cnt<unsigned(note_start_addr_i)+unsigned(note_sample_count_i)-1 then 
+                addr_cnt<=addr_cnt+1;
+            else
+                p_cnt<=1;
+                
+            end if;
+            
             if enable_i='0' then 
                 next_state<=enable_wait;
             else 
@@ -80,6 +91,15 @@ begin
             end if;
         
         when p2 =>
+        
+            invert_output<=false;
+            if addr_cnt>unsigned(note_start_addr_i) then 
+                addr_cnt<=addr_cnt-1;
+            else
+                invert_output<=true;
+                p_cnt<=2;
+            end if;
+            
             if enable_i='0' then 
                 next_state<=enable_wait;
             else 
@@ -88,6 +108,14 @@ begin
         
         when p3 =>
         
+            invert_output<=true;
+            if addr_cnt<unsigned(note_start_addr_i)+unsigned(note_sample_count_i)-1 then 
+                addr_cnt<=addr_cnt+1;
+                
+            else
+                p_cnt<=3;
+            end if;
+            
             if enable_i='0' then 
                 next_state<=enable_wait;
             else 
@@ -95,6 +123,15 @@ begin
             end if;
         
         when p4 =>
+        
+            invert_output<=true;
+            if addr_cnt>unsigned(note_start_addr_i) then 
+                addr_cnt<=addr_cnt-1;
+            else
+                invert_output<=false;
+                p_cnt<=0;
+            end if;
+            
             if enable_i='0' then 
                 next_state<=enable_wait;
             else 
@@ -108,79 +145,11 @@ begin
   
   end process;
   
+  ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
   
-  -- output
-  process(current_state)
-  begin
-    case current_state is
-        when enable_wait =>
-            p_cnt<=0;
-            invert_output<=false;
-            addr_cnt<=to_integer(unsigned(note_start_addr_i));        
-            ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            sample_out<=(15 downto 0=>'0') & ROM_qsin_sample_i;
-            
-        when rom_up =>
-            addr_cnt<=to_integer(unsigned(note_start_addr_i)); 
-            ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            sample_out<=(15 downto 0=>'0') & ROM_qsin_sample_i;
-            
-        when ready_wait =>
-            ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            
-            if invert_output then 
-                  sample_out<=std_logic_vector(not(unsigned((15 downto 0=>'0') & ROM_qsin_sample_i))+1);
-            else        
-                  sample_out<=(15 downto 0=>'0') & ROM_qsin_sample_i;        
-           end if;
-        
-        when p1 =>
-            invert_output<=false;
-            if addr_cnt<unsigned(note_start_addr_i)+unsigned(note_sample_count_i)-1 then 
-                addr_cnt<=addr_cnt+1;
-                ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            else
-                p_cnt<=1;
-            end if;
-           
-        
-        when p2 =>
-            invert_output<=false;
-            if addr_cnt>unsigned(note_start_addr_i) then 
-                addr_cnt<=addr_cnt-1;
-                ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            else
-                p_cnt<=2;
-            end if;
-        
-        when p3 =>
-            invert_output<=true;
-            if addr_cnt<unsigned(note_start_addr_i)+unsigned(note_sample_count_i)-1 then 
-                addr_cnt<=addr_cnt+1;
-                ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            else
-                p_cnt<=3;
-            end if;
-           
-        
-        when p4 =>
-            invert_output<=true;
-            if addr_cnt>unsigned(note_start_addr_i) then 
-                addr_cnt<=addr_cnt-1;
-                ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
-            else
-                p_cnt<=0;
-            end if;
-            
-        
-        when others =>
-            
-            
-    end case;
+  sample_out<=std_logic_vector(not(unsigned((15 downto 0=>'0') & ROM_qsin_sample_i))+1) when invert_output else (15 downto 0=>'0') & ROM_qsin_sample_i ;
   
-  
-  end process;
-
+ 
   
 
 end Behavioral;
