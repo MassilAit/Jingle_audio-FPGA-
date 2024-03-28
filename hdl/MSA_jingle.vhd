@@ -68,7 +68,7 @@ begin
             end if;
         
         when incr =>
-            if addr_cnt+1<2 then 
+            if addr_cnt+1<3 then 
                 addr_cnt<=addr_cnt+1;
                 timing_start_o<='1';
                 note_enable_o <='1';

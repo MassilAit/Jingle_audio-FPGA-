@@ -16,13 +16,14 @@ architecture Behavioral of ROM_jingle is
 
   -- A completer
   
-  type ROM_T is array (0 to 1) of std_logic_vector (35 downto 0);
+  type ROM_T is array (0 to 2) of std_logic_vector (35 downto 0);
   constant ROM_cst : ROM_T := (
     -- bits 35-20 : durée de note en ms
     -- bits 19-8  : adresse de départ de la note
     -- bits 7-0   : nombre d'echantillons pour la note
-    X"0001"&X"001"&X"00",
-    X"0001"&X"002"&X"00"
+    X"03E8"&X"000"&X"54",
+    X"03E8"&X"0A3"&X"4B",
+    X"03E8"&X"134"&X"42"
     );
   signal data : std_logic_vector(35 downto 0);
 
