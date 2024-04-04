@@ -20,6 +20,7 @@ end modulateur_volume;
 architecture Behavioral of modulateur_volume is
 
   signal v_cnt:integer range 0 to 15:=7;
+  signal v_cnt_next:integer range 0 to 15:=7;
   signal sample_in_integer:integer range -8388608 to 8388607;
   signal column_integer:integer range 0 to 127;
   type state is(btn_wait,btnu_on,btnd_on,btnu_wait, btnd_wait);
@@ -35,13 +36,14 @@ begin
                 v_cnt<=7;
             elsif rising_edge(clk_i) then
                 current_state<=next_state;
+                v_cnt<=v_cnt_next;
      
     end if;
   
   end process;
   
   
-  process(current_state,btnu_i,btnd_i)
+  process(current_state,v_cnt,btnu_i,btnd_i)
   begin
   case current_state is
         when btn_wait =>
@@ -56,29 +58,29 @@ begin
         when btnu_on =>
             start_jingle_o<='1';
             if v_cnt<15 then 
-                v_cnt<=v_cnt+1;
+                v_cnt_next<=v_cnt+1;
             end if;
             next_state<=btnu_wait;
         
         when btnd_on =>
             start_jingle_o<='1';
             if v_cnt>0 then 
-                v_cnt<=v_cnt-1;
+                v_cnt_next<=v_cnt-1;
             end if;
             next_state<=btnd_wait;
         when btnu_wait =>
             start_jingle_o<='0';
             if btnu_i='1' then 
-                next_state<=btn_wait;
-            else
                 next_state<=btnu_wait;
+            else
+                next_state<=btn_wait;
             end if;
         when btnd_wait =>
             start_jingle_o<='0';
             if btnd_i='1' then 
-                next_state<=btn_wait;
-            else
                 next_state<=btnd_wait;
+            else
+                next_state<=btnu_wait;
             end if;
         when others =>
             next_state<=btn_wait;
