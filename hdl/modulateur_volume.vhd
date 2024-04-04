@@ -19,55 +19,72 @@ end modulateur_volume;
 
 architecture Behavioral of modulateur_volume is
 
-  signal v_cnt:integer range 0 to 15:=15;
+  signal v_cnt:integer range 0 to 15:=7;
   signal sample_in_integer:integer range -8388608 to 8388607;
   signal column_integer:integer range 0 to 127;
-  signal btnu_state : boolean:=false;
-  signal btnd_state : boolean:=false;
+  type state is(btn_wait,btnu_on,btnd_on,btnu_wait, btnd_wait);
+  signal current_state, next_state:state;
   
 
 begin
 
-    process(clk_i, btnd_i, btnu_i)
-    begin
-    
-       if falling_edge(clk_i) then 
-         start_jingle_o<='0';
-        end if;
-        
-        
-        
-        if btnu_i='1' and not btnu_state then 
+   process(clk_i,rst_i)
+        begin
+            if rst_i='1' then
+                current_state<=btn_wait;
+                v_cnt<=7;
+            elsif rising_edge(clk_i) then
+                current_state<=next_state;
+     
+    end if;
+  
+  end process;
+  
+  
+  process(current_state,btnu_i,btnd_i)
+  begin
+  case current_state is
+        when btn_wait =>
+            start_jingle_o<='0';
+            if btnu_i='1' then 
+                next_state<=btnu_on;
+            elsif btnd_i='1' then 
+                next_state<=btnd_on;
+            else
+                next_state<=btn_wait;
+            end if;    
+        when btnu_on =>
             start_jingle_o<='1';
-            btnu_state<=true;
             if v_cnt<15 then 
                 v_cnt<=v_cnt+1;
             end if;
-            
-        elsif btnu_i='0' then
-            btnu_state<=false;
-            
-       
+            next_state<=btnu_wait;
         
-        end if;
-        
-        if btnd_i='1' and not btnd_state then 
+        when btnd_on =>
             start_jingle_o<='1';
-            btnd_state<=true;
             if v_cnt>0 then 
                 v_cnt<=v_cnt-1;
             end if;
-            
-        elsif btnd_i='0' then
-            btnd_state<=false;
-            
-       
-        
-        end if;
-        
-        
-    
-    end process;
+            next_state<=btnd_wait;
+        when btnu_wait =>
+            start_jingle_o<='0';
+            if btnu_i='1' then 
+                next_state<=btn_wait;
+            else
+                next_state<=btnu_wait;
+            end if;
+        when btnd_wait =>
+            start_jingle_o<='0';
+            if btnd_i='1' then 
+                next_state<=btn_wait;
+            else
+                next_state<=btnd_wait;
+            end if;
+        when others =>
+            next_state<=btn_wait;
+    end case;
+  
+  end process;
 
 
     process(clk_i)
