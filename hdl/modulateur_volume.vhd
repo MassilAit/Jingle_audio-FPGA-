@@ -19,41 +19,67 @@ end modulateur_volume;
 
 architecture Behavioral of modulateur_volume is
 
-  signal v_cnt:integer range 0 to 15:=7;
+  signal v_cnt:integer range 0 to 15:=15;
   signal sample_in_integer:integer range -8388608 to 8388607;
   signal column_integer:integer range 0 to 127;
+  signal btnu_state : boolean:=false;
+  signal btnd_state : boolean:=false;
+  
 
 begin
 
     process(clk_i, btnd_i, btnu_i)
     begin
-        if rising_edge(btnd_i) then 
+    
+       if falling_edge(clk_i) then 
+         start_jingle_o<='0';
+        end if;
+        
+        
+        
+        if btnu_i='1' and not btnu_state then 
             start_jingle_o<='1';
-            if v_cnt>0 then 
-                v_cnt<=v_cnt-1;
-            end if;
-         
-        elsif rising_edge(btnu_i) then 
-            start_jingle_o<='1';
+            btnu_state<=true;
             if v_cnt<15 then 
                 v_cnt<=v_cnt+1;
             end if;
-    
-        else
-            start_jingle_o<='0';
-    
+            
+        elsif btnu_i='0' then
+            btnu_state<=false;
+            
+       
+        
         end if;
+        
+        if btnd_i='1' and not btnd_state then 
+            start_jingle_o<='1';
+            btnd_state<=true;
+            if v_cnt>0 then 
+                v_cnt<=v_cnt-1;
+            end if;
+            
+        elsif btnd_i='0' then
+            btnd_state<=false;
+            
+       
+        
+        end if;
+        
+        
     
     end process;
 
 
     process(clk_i)
     begin
-        if (column_integer/8>=v_cnt) then 
-            pixel_o<='1';
-        else 
+      
+      if rising_edge(clk_i) then
+        if (column_integer/8 >= v_cnt) then 
             pixel_o<='0';
+        else 
+            pixel_o<='1';
        end if;
+     end if;
     
     end process;
 
