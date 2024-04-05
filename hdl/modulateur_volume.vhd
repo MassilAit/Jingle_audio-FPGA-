@@ -31,12 +31,10 @@ begin
 
    process(clk_i,rst_i)
         begin
-            if rst_i='1' then
-                current_state<=btn_wait;
-                v_cnt<=7;
-            elsif rising_edge(clk_i) then
-                current_state<=next_state;
+            if rising_edge(clk_i) then
                 v_cnt<=v_cnt_next;
+                current_state<=next_state;
+                
      
     end if;
   
@@ -48,6 +46,7 @@ begin
   case current_state is
         when btn_wait =>
             start_jingle_o<='0';
+            v_cnt_next<=v_cnt;
             if btnu_i='1' then 
                 next_state<=btnu_on;
             elsif btnd_i='1' then 
@@ -59,6 +58,8 @@ begin
             start_jingle_o<='1';
             if v_cnt<15 then 
                 v_cnt_next<=v_cnt+1;
+            else
+                v_cnt_next<=v_cnt;
             end if;
             next_state<=btnu_wait;
         
@@ -66,10 +67,13 @@ begin
             start_jingle_o<='1';
             if v_cnt>0 then 
                 v_cnt_next<=v_cnt-1;
+            else
+                v_cnt_next<=v_cnt;
             end if;
             next_state<=btnd_wait;
         when btnu_wait =>
             start_jingle_o<='0';
+            v_cnt_next<=v_cnt;
             if btnu_i='1' then 
                 next_state<=btnu_wait;
             else
@@ -77,12 +81,15 @@ begin
             end if;
         when btnd_wait =>
             start_jingle_o<='0';
+            v_cnt_next<=v_cnt;
             if btnd_i='1' then 
                 next_state<=btnd_wait;
             else
                 next_state<=btnu_wait;
             end if;
         when others =>
+            start_jingle_o<='0';
+            v_cnt_next<=v_cnt;
             next_state<=btn_wait;
     end case;
   

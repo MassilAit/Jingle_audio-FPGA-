@@ -19,6 +19,7 @@ architecture Behavioral of generateur_sample is
     signal current_state, next_state:state;
     signal p_cnt:integer range 0 to 3:=0;
     signal addr_cnt : integer range 0 to 4095;
+    signal addr_cnt_next : integer range 0 to 4095;
     signal invert_output :boolean :=false;
 begin
 
@@ -28,6 +29,7 @@ begin
     if rst_i='1' then
         current_state<=enable_wait;
     elsif rising_edge(clk_i) then
+        addr_cnt<=addr_cnt_next;
         current_state<=next_state;
      
     end if;
@@ -39,18 +41,20 @@ begin
   begin
     case current_state is
         when enable_wait =>
-        
+    
             if enable_i='1' then
                 p_cnt<=0;
                 invert_output<=false;
-                addr_cnt<=to_integer(unsigned(note_start_addr_i));
+                addr_cnt_next<=to_integer(unsigned(note_start_addr_i));
                 next_state<=ready_wait;
             else
                 next_state<=enable_wait;
+                addr_cnt_next<=addr_cnt;
             end if;
             
             
         when ready_wait =>
+            addr_cnt_next<=addr_cnt;
             if enable_i='0' then
                 next_state <=enable_wait;
             elsif sample_ready_i='1' then 
@@ -78,9 +82,10 @@ begin
             invert_output<=false;
             
             if addr_cnt<unsigned(note_start_addr_i)+unsigned(note_sample_count_i)-1 then 
-                addr_cnt<=addr_cnt+1;
+                addr_cnt_next<=addr_cnt+1;
             else
                 p_cnt<=1;
+                addr_cnt_next<=addr_cnt;
                 
             end if;
             
@@ -94,10 +99,11 @@ begin
         
             invert_output<=false;
             if addr_cnt>unsigned(note_start_addr_i) then 
-                addr_cnt<=addr_cnt-1;
+                addr_cnt_next<=addr_cnt-1;
             else
                 invert_output<=true;
                 p_cnt<=2;
+                addr_cnt_next<=addr_cnt;
             end if;
             
             if enable_i='0' then 
@@ -110,10 +116,11 @@ begin
         
             invert_output<=true;
             if addr_cnt<unsigned(note_start_addr_i)+unsigned(note_sample_count_i)-1 then 
-                addr_cnt<=addr_cnt+1;
+                addr_cnt_next<=addr_cnt+1;
                 
             else
                 p_cnt<=3;
+                addr_cnt_next<=addr_cnt;
             end if;
             
             if enable_i='0' then 
@@ -126,10 +133,11 @@ begin
         
             invert_output<=true;
             if addr_cnt>unsigned(note_start_addr_i) then 
-                addr_cnt<=addr_cnt-1;
+                addr_cnt_next<=addr_cnt-1;
             else
                 invert_output<=false;
                 p_cnt<=0;
+                addr_cnt_next<=addr_cnt;
             end if;
             
             if enable_i='0' then 

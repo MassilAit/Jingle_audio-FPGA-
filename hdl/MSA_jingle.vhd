@@ -15,6 +15,7 @@ end MSA_jingle;
 architecture Behavioral of MSA_jingle is
 
   signal addr_cnt: integer range 0 to 7 :=0;
+  signal addr_cnt_next: integer range 0 to 7 :=0;
   type state is (jingle_wait, jingle_activate,ready_wait, incr);
   signal current_state, next_state : state;
 
@@ -23,12 +24,13 @@ begin
   --changement d'etat
   process(clk_i, rst_i)
   begin
-  if rst_i='1' then 
+    if rst_i='1' then 
   
-    current_state<=jingle_wait;
+        current_state<=jingle_wait;
     
-  elsif rising_edge(clk_i) then 
-     current_state<=next_state;
+    elsif rising_edge(clk_i) then
+        addr_cnt<=addr_cnt_next; 
+        current_state<=next_state;
      
   end if;
   
@@ -38,7 +40,7 @@ begin
   begin
     case current_state is 
         when jingle_wait =>
-            addr_cnt<=0;
+            addr_cnt_next<=0;
             timing_start_o<='0';
             note_enable_o <='0';
             
@@ -50,14 +52,14 @@ begin
             
         
         when jingle_activate =>
-            addr_cnt<=0;
+            addr_cnt_next<=0;
             timing_start_o<='1';
             note_enable_o <='1';
             
             next_state<=ready_wait;
         
         when ready_wait =>    
-            addr_cnt<=addr_cnt;
+            addr_cnt_next<=addr_cnt;
             timing_start_o<='0';
             note_enable_o <='1';
             
@@ -69,18 +71,21 @@ begin
         
         when incr =>
             if addr_cnt+1<3 then 
-                addr_cnt<=addr_cnt+1;
+                addr_cnt_next<=addr_cnt+1;
                 timing_start_o<='1';
                 note_enable_o <='1';
-                 next_state<=ready_wait;
+                next_state<=ready_wait;
             else
-                addr_cnt<=0;
+                addr_cnt_next<=0;
                 timing_start_o<='1';
                 note_enable_o <='1';
                 next_state<=jingle_wait;
             end if; 
         
         when others =>
+        addr_cnt_next<=0;
+            timing_start_o<='0';
+            note_enable_o <='0';
             next_state<=jingle_wait;
         
     
