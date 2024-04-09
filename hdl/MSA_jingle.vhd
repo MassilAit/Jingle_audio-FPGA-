@@ -70,20 +70,20 @@ begin
             end if;
         
         when incr =>
-            if addr_cnt+1<3 then 
+            if addr_cnt+1<4 then 
                 addr_cnt_next<=addr_cnt+1;
                 timing_start_o<='1';
                 note_enable_o <='1';
                 next_state<=ready_wait;
             else
                 addr_cnt_next<=0;
-                timing_start_o<='1';
-                note_enable_o <='1';
+                timing_start_o<='0';
+                note_enable_o <='0';
                 next_state<=jingle_wait;
             end if; 
         
         when others =>
-        addr_cnt_next<=0;
+            addr_cnt_next<=0;
             timing_start_o<='0';
             note_enable_o <='0';
             next_state<=jingle_wait;

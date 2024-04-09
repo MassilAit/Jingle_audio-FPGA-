@@ -112,7 +112,8 @@ begin
   
   column_integer<=to_integer(unsigned(column_i));
   sample_in_integer<=to_integer(signed(sample_in));
-  sample_out <= std_logic_vector(to_signed(sample_in_integer*v_cnt*2056,24));
+  sample_out <= (others=>'0') when v_cnt=0 else
+               std_logic_vector(to_signed(sample_in_integer/(16-v_cnt),24));
   
   
 
