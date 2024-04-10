@@ -14,8 +14,8 @@ end MSA_jingle;
 
 architecture Behavioral of MSA_jingle is
 
-  signal addr_cnt: integer range 0 to 7 :=0;
-  signal addr_cnt_next: integer range 0 to 7 :=0;
+  signal addr_cnt: integer range 0 to 15 :=0;
+  signal addr_cnt_next: integer range 0 to 15 :=0;
   type state is (jingle_wait, jingle_activate,ready_wait, incr);
   signal current_state, next_state : state;
 
@@ -70,7 +70,7 @@ begin
             end if;
         
         when incr =>
-            if addr_cnt+1<4 then 
+            if addr_cnt+1<14 then 
                 addr_cnt_next<=addr_cnt+1;
                 timing_start_o<='1';
                 note_enable_o <='1';

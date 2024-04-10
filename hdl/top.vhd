@@ -19,11 +19,24 @@ entity top is
         oled_sclk_o       : out   std_logic;
         oled_sdo_o        : out   std_logic;
         oled_vbat_n_o     : out   std_logic;
+        sw_i              : in    std_logic;
+        led_0             : out   std_logic;
         oled_vdd_n_o      : out   std_logic);
 end top;
 
 architecture Behavioral of top is
 
+  component module_echo
+    port (
+      clk_i   : in  std_logic;
+      rst_i         : in  std_logic;
+      sample_ready_i  : in std_logic;
+      valid_i         : in std_logic;
+      sample_i     : in std_logic_vector(23 downto 0);
+      sample_o    : out std_logic_vector(23 downto 0)
+      );
+  end component;
+  
   component controleur_OLED
     port (
       clk_50mhz_i   : in  std_logic;
@@ -158,8 +171,23 @@ architecture Behavioral of top is
   signal btnd_ar, btnu_ar                         : std_logic;
   signal start_jingle                             : std_logic;
   signal codec_ready, codec_valid                 : std_logic;
+  signal sample_volume                            : std_logic_vector(23 downto 0);
+  signal sample_echo                              : std_logic_vector(23 downto 0);
 
 begin
+
+  sample_volume<=sine_sample when sw_i='0' else sample_echo;
+  led_0<=sw_i;
+
+  inst_echo: module_echo
+    port map (
+      clk_i     => clk_50mhz,
+      rst_i           => rst_sys,
+      sample_ready_i  =>codec_ready,
+      valid_i         => codec_valid,
+      sample_i        => codec_sample_out,
+      sample_o        => sample_echo    
+      );
 
   inst_modulateur_volume : modulateur_volume
     port map(
@@ -167,7 +195,7 @@ begin
       clk_i          => clk_50mhz,
       btnd_i         => btnd_ar,
       btnu_i         => btnu_ar,
-      sample_in      => sine_sample,
+      sample_in      => sample_volume,
       sample_out     => vol_sample,
       column_i       => column,
       row_i          => row,

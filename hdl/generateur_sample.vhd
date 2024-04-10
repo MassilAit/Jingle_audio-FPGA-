@@ -23,7 +23,7 @@ architecture Behavioral of generateur_sample is
     signal addr_cnt_next : integer range 0 to 4095;
     signal invert_output :boolean :=false;
     signal invert_output_next :boolean :=false;
-    signal zeros: std_logic_vector(15 downto 0):=(others=>'0');
+
 begin
 
   --changement d'etat et reset
@@ -166,8 +166,8 @@ begin
   
   ROM_qsin_addr_o<=std_logic_vector(to_unsigned(addr_cnt,12));
   
-  sample_out<= std_logic_vector(to_signed(-to_integer(signed(ROM_qsin_sample_i & zeros)), 24)) when invert_output else 
-              ROM_qsin_sample_i & zeros;
+  sample_out<= std_logic_vector(to_signed(-to_integer(signed("00"& ROM_qsin_sample_i & (13 downto 0 => '0'))), 24)) when invert_output else 
+              "00" & ROM_qsin_sample_i & (13 downto 0 => '0');
   
  
   
