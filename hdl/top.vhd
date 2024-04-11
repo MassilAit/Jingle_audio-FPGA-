@@ -20,7 +20,7 @@ entity top is
         oled_sdo_o        : out   std_logic;
         oled_vbat_n_o     : out   std_logic;
         sw_i              : in    std_logic;
-        led_0             : out   std_logic;
+        led_1             : out   std_logic;
         oled_vdd_n_o      : out   std_logic);
 end top;
 
@@ -177,7 +177,7 @@ architecture Behavioral of top is
 begin
 
   sample_volume<=sine_sample when sw_i='0' else sample_echo;
-  led_0<=sw_i;
+  led_1<=sw_i;
 
   inst_echo: module_echo
     port map (

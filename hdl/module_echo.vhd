@@ -35,6 +35,8 @@ architecture Behavioral of module_echo is
   signal sample_valid : std_logic_vector(23 downto 0) := (others => '0');
   signal sample_valid_next : std_logic_vector(23 downto 0) := (others => '0');
   signal fifo_full : std_logic;
+  signal wr_en:std_logic:='0';
+  signal rd_en:std_logic;
   type state is(no_full,full);
   signal current_state, next_state:state;
 
@@ -43,11 +45,11 @@ begin
 
   inst_FIFO : FIFO port map
   (
-    clk    => sample_ready_i,
+    clk    => clk_i,
     srst   => rst_i,
     din    => sample_valid,
-    wr_en  => '1',
-    rd_en  => fifo_full, 
+    wr_en  => wr_en,
+    rd_en  => rd_en, 
     dout   => fifo_o,
     full   => fifo_full,
     empty  => open
@@ -59,7 +61,7 @@ begin
       sample_valid <= (others => '0');
     elsif rising_edge(clk_i) then
         sample_valid<=sample_valid_next;
-        current_state<=next_state;     
+        current_state<=next_state;    
     end if;
   end process;
 
@@ -103,4 +105,21 @@ begin
             next_state<=no_full;       
     end case;
   end process;
+  
+  process(clk_i, sample_ready_i)
+  begin
+    if rising_edge(clk_i) then 
+        if sample_ready_i='1' then 
+            wr_en<='1';
+            rd_en<=fifo_full;
+        
+        else
+            wr_en<='0';
+            rd_en<='0';
+        end if;
+    end if;
+  
+  
+  end process;
+  
 end Behavioral;
